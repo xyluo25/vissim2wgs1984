@@ -1,4 +1,4 @@
-# vissim2wgs1842
+# vissim2wgs1984
 
 Convert vissim files (.inpx and .fzp to geojson, .fhz to csv).
 
@@ -46,6 +46,9 @@ specifically,
    Shapely==1.7.1
    ```
 3. use case
+
+   Sample user case at intersection
+   ![1655249626589](image/README/1655249626589.png)
 
    ```
    import  vissim2geojson
