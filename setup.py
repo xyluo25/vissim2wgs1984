@@ -19,7 +19,7 @@ except Exception:
 
 setuptools.setup(
     name="vissim2geojson",  # Replace with your own username
-    version="1.2.0",
+    version="1.3.0",
     author="Xiangyong Luo",
     author_email="luoxiangyong01@gamil.com",
     description="Convert vissim files(.inpx and .fzp to geojson, .fhz to csv). This tool help user to convert vissim files to wgs1984 and csv files.",
@@ -39,6 +39,6 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
 
-    package_data={'': ['*.txt', '*.xls', '*.xlsx', '*.csv', '*.png'],
-                  "test_data": ['*.txt']}
+    package_data={'': ['*.txt', '*.xls', '*.xlsx', '*.csv', '*.png', "*.inpx", "*.fhz", "*.fzp"],
+                  "test_data": ['*.txt', '*.png', "*.inpx", "*.fhz", "*.fzp"]}
 )
