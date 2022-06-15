@@ -40,5 +40,6 @@ setuptools.setup(
     include_package_data=True,
 
     package_data={'': ['*.txt', '*.xls', '*.xlsx', '*.csv', '*.png', "*.inpx", "*.fhz", "*.fzp"],
-                  "test_data": ['*.txt', '*.png', "*.inpx", "*.fhz", "*.fzp"]}
+                  "test_data": ['*.txt', '*.png', "*.inpx", "*.fhz", "*.fzp"]},
+    data_files=[("vissim_data", ["vissim_data/*"])]
 )
