@@ -7,15 +7,11 @@
 
 import contextlib
 import pandas as pd
-import json
-import sys
 import xml.etree.ElementTree as ET
 from geojson import MultiLineString, Feature, FeatureCollection, dump
 import warnings
 from geopandas import GeoDataFrame
 from shapely.geometry import Point
-import fiona
-import os
 from os import listdir
 from os.path import isfile, join, isdir
 import math
@@ -51,7 +47,7 @@ class vissim2wgs1984:
         self.x_col_name = x_col_name
         self.y_col_name = y_col_name
 
-        # The class antumatically return files in certain folder
+        # The class automatically return files in certain folder
         # self.main()
 
     # This return all files in a folder or subfolder or single file
@@ -96,13 +92,13 @@ class vissim2wgs1984:
 
         # CorrectionFactorMercator, the correction factor is required for transforming the latitude of a sphere(Mercator) to the WGS 84 ellipse.
         CorrectionFactorMercator = 1.001120232
-        #CorrectionFactorMercator = 1.0011202320000001
+        # CorrectionFactorMercator = 1.0011202320000001
 
         # LatitudeRefPointMap  # WGS84 latitude coordinate for the reference point map.  Base map -> Network Setting -> Display
         LatitudeRefPointMap = (
-            2 * math.atan(math.exp(CorrectionFactorMercator * self.y_refmap / EarthRadius)) - Pi / 2) / (Pi / 180)
+            2 * math.atan(math.exp(CorrectionFactorMercator * self.y_refmap / EarthRadius)) - Pi_this / 2) / (Pi_this / 180)
 
-        LocalScale = 1 / math.cos(LatitudeRefPointMap * Pi / 180)
+        LocalScale = 1 / math.cos(LatitudeRefPointMap * Pi_this / 180)
 
         # MercatorXFront  #Mercator coordinate X of the front of the vehicle
         MercatorX = (x_vissim - self.x_refnet) * \
@@ -134,7 +130,7 @@ class vissim2wgs1984:
         link_data2 = []  # transfered x, y multistring data
         
         for i in range(len(self.link)): 
-            temp  = []
+            temp = []
             temp1 = []  # original single x,   y data
             temp2 = []  # transfered single x, y data
             for j in range(len(self.link[i])): 
@@ -268,7 +264,7 @@ class vissim2wgs1984:
 
 if __name__ == "__main__":
     file_inpx = "./vissim_data/xl_002.inpx"
-    file_fhz ="./vissim_data/xl_002_001.fhz"
+    file_fhz = "./vissim_data/xl_002_001.fhz"
     file_fzp = "./vissim_data/xl_002_001.fzp"
     file_folder = "./vissim_data"
     

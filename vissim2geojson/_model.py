@@ -5,5 +5,4 @@
 # Author/Copyright: Mr. Xiangyong Luo
 ##############################################################
 
-
-from .vissim2geojson import vissim2geojson
+from .vissim2geojson import vissim2wgs1984

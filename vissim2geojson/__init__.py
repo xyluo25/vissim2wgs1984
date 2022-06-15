@@ -5,5 +5,4 @@
 # Author/Copyright: Mr. Xiangyong Luo
 ##############################################################
 
-
-from ._models import *
+from ._model import *
