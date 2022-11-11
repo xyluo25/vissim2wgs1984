@@ -102,9 +102,9 @@ class vissim2wgs1984:
 
         # MercatorXFront  #Mercator coordinate X of the front of the vehicle
         MercatorX = (x_vissim - self.x_refnet) * \
-            LocalScale + self.x_refmap
+                LocalScale + self.x_refmap
         MercatorY = (y_vissim - self.y_refnet) * \
-            LocalScale + self.y_refmap
+                LocalScale + self.y_refmap
 
         a_cor = CorrectionFactorMercator
         r = EarthRadius
@@ -128,7 +128,7 @@ class vissim2wgs1984:
         link_data = []
         link_data1 = []  # original x,   y multistring data
         link_data2 = []  # transfered x, y multistring data
-        
+
         for i in range(len(self.link)): 
             temp = []
             temp1 = []  # original single x,   y data
@@ -267,13 +267,13 @@ if __name__ == "__main__":
     file_fhz = "./vissim_data/xl_002_001.fhz"
     file_fzp = "./vissim_data/xl_002_001.fzp"
     file_folder = "./vissim_data"
-    
+
     # prepare map reference data from Vissim
     x_refmap = -9772791.018
     y_refmap = 5317836.791
     x_refnet = 0
     y_refnet = 0
-    
+
     # for covert fzp files, if you don't need to convert fzp file, leave these value to default values.
     x_col_name = "POS"
     y_col_name = "POSLAT"
