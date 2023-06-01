@@ -2,7 +2,7 @@
 
 Convert vissim files (.inpx and .fzp to geojson, .fhz to csv).
 
-This tool help user to convert vissim files to wgs1984 and csv files.
+This tool help user convert vissim files to wgs1984 and csv files.
 
 specifically,
 
@@ -18,13 +18,13 @@ specifically,
    You will get the layer file (.inpx). the .inpx can only open by PTV Vissim and you can use this tool to convert layer file to wgs1984 so that you can see your layer at different platform (QGIS, Kepler.gl, ArcMap...)
 
    You will get simulation results (.fzp and .fhz). you can open these files by PTV Vissim but you can not other platform. you can use this tool to convert .fzp file to (.geojson and .csv),  .fhz file to .geojson.
-2. **Prepare data in need for this tool**
+2. **Prepare data for this tool**
 
    In order to use this tool , you need to prepare several data for the map conversion.
 
    There are for digital nubmers from Background maps:
 
-   every time you are using PTV Vissim, the software will generate these nubmers at Base Data -> Network settings -> Display
+   Everytime you are using PTV Vissim, the software will generate these nubmers at Base Data -> Network settings -> Display
 
    **Reference point in map**: (-9772791.018, 5317836.791)                  you will need to replace these numbers by yours
 
@@ -60,9 +60,10 @@ specifically,
        file_fzp ="./vissim_data/xl_002_001.fzp"
        file_folder ="./vissim_data"
 
-       # prepare map reference data from Vissim
+       # prepare map reference info from Vissim
        x_refmap =-9772791.018
        y_refmap =5317836.791
+
        x_refnet =0
        y_refnet =0
 

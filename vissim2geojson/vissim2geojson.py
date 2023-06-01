@@ -21,7 +21,15 @@ class vissim2wgs1984:
 
     print("Please check and correctly input x_refmap, y_refmap, x_refnet and y_refnet from your vissim software!")
 
-    def __init__(self, vissim_file_path, x_refmap=-9772674.016, y_refmap=5317775.409, x_refnet=0, y_refnet=0, x_col_name="POS", y_col_name="POSLAT"):
+    def __init__(self,
+                 vissim_file_path: str,
+                 x_refmap: float = -9772674.016,
+                 y_refmap: float = 5317775.409,
+                 x_refnet: float = 0,
+                 y_refnet: float = 0,
+                 x_col_name:str = "POS",
+                 y_col_name: str = "POSLAT"):
+
         """A tool to convert vissim files to geojson and csv.
             specifically:
                 convert .inpx file to geojson file
@@ -36,10 +44,10 @@ class vissim2wgs1984:
             x_col_name (str, optional): the longitude column name in fzp file to convert fzp file to geojson. Defaults to "POS".
             y_col_name (str, optional):the latitude column name in fzp file to convert fzp file to geojson. Defaults to "POSLAT".
         """
-        
+
         self.vissim_file_path = self.__allFiles(vissim_file_path)
         print("Input files: ", self.vissim_file_path)
-        
+
         self.x_refmap = x_refmap
         self.y_refmap = y_refmap
         self.x_refnet = x_refnet
@@ -51,8 +59,8 @@ class vissim2wgs1984:
         # self.main()
 
     # This return all files in a folder or subfolder or single file
-    def __allFiles(self, path, SeeFiles=False):
-        
+    def __allFiles(self, path: str, view_files=False) -> list:
+
         files = []
 
         def readFiles(path):
@@ -67,11 +75,11 @@ class vissim2wgs1984:
             else:
                 print("Invalid Input Path!")
             return files
-        if SeeFiles:
+        if view_files:
             print(readFiles(path))
         return readFiles(path)
 
-    def __vissim2wgs1984(self, x_vissim, y_vissim):
+    def __vissim2wgs1984(self, x_vissim: float, y_vissim: float) -> list:
 
         # ##This is a function that transfer a single vissim x,y coordinate date into wgs1984 x,y format######
 
@@ -115,7 +123,7 @@ class vissim2wgs1984:
 
         return [Longitude, Latitude]
 
-    def __get_link(self, path_vissim_inpx):
+    def __get_link(self, path_vissim_inpx: str) -> list:
         with open(path_vissim_inpx, "r") as f:
             xmlstring = f.read()
         f.close()
@@ -124,19 +132,19 @@ class vissim2wgs1984:
         root = tree.getroot()
         return root.findall("links")[0]
 
-    def __link_vissim2wgs(self): 
+    def __link_vissim2wgs(self):
         link_data = []
         link_data1 = []  # original x,   y multistring data
         link_data2 = []  # transfered x, y multistring data
-        
-        for i in range(len(self.link)): 
+
+        for i in range(len(self.link)):
             temp = []
             temp1 = []  # original single x,   y data
             temp2 = []  # transfered single x, y data
-            for j in range(len(self.link[i])): 
-                for k in range(len(self.link[i][j])): 
+            for j in range(len(self.link[i])):
+                for k in range(len(self.link[i][j])):
                     with contextlib.suppress(Exception):
-                        for m in range(len(self.link[i][j][k])): 
+                        for m in range(len(self.link[i][j][k])):
                             temp.extend((self.link[i][j][k][m].attrib["x"], self.link[i][j][k][m].attrib["y"], self.link[i][j][k][m].attrib["zOffset"]))
                             temp1.append((float(self.link[i][j][k][m].attrib["x"]), float(self.link[i][j][k][m].attrib["y"])))
                             temp2.append(self.__vissim2wgs1984(float(self.link[i][j][k][m].attrib["x"]), float(self.link[i][j][k][m].attrib["y"])))
@@ -151,8 +159,8 @@ class vissim2wgs1984:
     def main(self):
         # #####save geojson data to geojson file ######
 
-        for i in self.vissim_file_path: 
-            if ".inpx" in i: 
+        for i in self.vissim_file_path:
+            if ".inpx" in i:
                 print("############## Begin to process inpx file! ######################\n")
                 self.output_filename = i + ".geojson"
                 self.link = self.__get_link(i)
@@ -169,13 +177,15 @@ class vissim2wgs1984:
                     # f.write(str(self.__multilines))
                 f.close()
                 print("\nSuccessfully Save inpx file to geojson\n", self.output_filename)
-            elif ".fzp" in i: 
+
+            elif ".fzp" in i:
                 print("############## Begin to process fzp file! ######################\n")
                 self.output_filename = i + ".geojson"
                 self.vissim_fzp(i, self.x_col_name, self.y_col_name)
                 self.dataframe2geojson()
                 print("\nSuccessfully Save fzp file to geojson\n", self.output_filename)
-            elif ".fhz" in i: 
+
+            elif ".fhz" in i:
                 print("############## Begin to process fhz file! ######################\n")
                 self.output_filename = i + ".csv"
                 self.vissim_fhz(i)
@@ -184,12 +194,13 @@ class vissim2wgs1984:
 
                 # df.to_csv(self.output_filename,header=False,index = False,encoding="utf_8_sig")
                 print("\nSuccessfully Save fhz file to csv\n", "fhz file is a vissim output file need no to transfer to geojson\n", self.output_filename)
-            else: 
+
+            else:
                 warnings.warn(f"Invalid Input File or Folder: {i}.")
-        
-    def vissim_fzp(self, path_vissim_fzp, x_col_name="POS", y_col_name="POSLAT"): 
+
+    def vissim_fzp(self, path_vissim_fzp: str, x_col_name: str = "POS", y_col_name: str = "POSLAT") -> None:
         df_fzp = ""
-        with open(path_vissim_fzp, 'rb') as ff: 
+        with open(path_vissim_fzp, 'rb') as ff:
             df_fzp = pd.DataFrame(ff.readlines())
         ff.close()
         fzp_date = str(df_fzp.iloc[3, :])  # Get the vissim running time(date)
@@ -202,12 +213,12 @@ class vissim2wgs1984:
 
         columns_pre = []
         columns_pre = list(fzp_data.iloc[0])
-        for i in columns_pre: 
-            if "\\r\\n'" in i: 
+        for i in columns_pre:
+            if "\\r\\n'" in i:
                 columns_pre[columns_pre.index(i)] = i[:-5]
 
         fzp_data.columns = columns_pre
-        
+
         fzp_data = fzp_data.iloc[1:]
         fzp_data = fzp_data.reset_index(drop=True)
         fzp_data.iloc[:, 0] = [i.split("'")[1] for i in fzp_data.iloc[:, 0]]
@@ -216,11 +227,11 @@ class vissim2wgs1984:
 
         fzp_data["datetime"] = pd.to_datetime(fzp_date.split("\\")[0].split(
             "Date: ")[1]) + pd.to_timedelta(fzp_data.iloc[:, 0], unit='s')
-        
+
         fzp_data[y_col_name] = fzp_data[y_col_name].apply(lambda x: x[:-5])
         # print(fzp_data.head(10))
 
-        for coor in range(len(fzp_data[x_col_name])): 
+        for coor in range(len(fzp_data[x_col_name])):
             # "COORDREARX"
             with contextlib.suppress(Exception):
                 fzp_data.loc[coor, f"{x_col_name}_wgs"], fzp_data.loc[coor, f"{y_col_name}_wgs"] = self.__vissim2wgs1984(float(fzp_data.loc[coor, x_col_name]), float(fzp_data.loc[coor, y_col_name]))
@@ -229,19 +240,19 @@ class vissim2wgs1984:
         self.x_col_name_lonlat = f"{x_col_name}_wgs"
         self.y_col_name_lonlat = f"{y_col_name}_wgs"
 
-    def dataframe2geojson(self):
+    def dataframe2geojson(self) -> None:
         df = self.fzp_data
         geometry = [Point(xy) for xy in zip(df[self.x_col_name_lonlat], df[self.y_col_name_lonlat])]
         # http: //www.spatialreference.org/ref/epsg/2263/
-        
+
         geo_df = GeoDataFrame(df, crs="EPSG:4326", geometry=geometry)  # geometry=geometry
         geo_df.to_file(self.output_filename, driver="GeoJSON")
         df.to_csv(self.output_filename + ".csv", index=False)
         # geo_df.to_file(driver='ESRI Shapefile', filename='data.shp')
 
-    def vissim_fhz(self, path_vissim_fhz): 
+    def vissim_fhz(self, path_vissim_fhz: str) -> None:
 
-        with open(path_vissim_fhz, 'rb') as f: 
+        with open(path_vissim_fhz, 'rb') as f:
             df_fhz = pd.DataFrame(f.readlines())
         f.close()
         fhz_date = str(df_fhz.iloc[5, :])
@@ -252,7 +263,7 @@ class vissim2wgs1984:
         fhz_data.columns = fhz_data.iloc[0]
         fhz_data = fhz_data.iloc[1:]
         fhz_data = fhz_data.reset_index(drop=True)
-        for j in range(len(fhz_data.iloc[:, 0])): 
+        for j in range(len(fhz_data.iloc[:, 0])):
             fhz_data.iloc[j, 0] = str(fhz_data.iloc[j, 0]).split("'")[1]
 
         fhz_data.iloc[:, 0] = fhz_data.iloc[:, 0].astype(float)
@@ -267,13 +278,13 @@ if __name__ == "__main__":
     file_fhz = "./vissim_data/xl_002_001.fhz"
     file_fzp = "./vissim_data/xl_002_001.fzp"
     file_folder = "./vissim_data"
-    
+
     # prepare map reference data from Vissim
     x_refmap = -9772791.018
     y_refmap = 5317836.791
     x_refnet = 0
     y_refnet = 0
-    
+
     # for covert fzp files, if you don't need to convert fzp file, leave these value to default values.
     x_col_name = "POS"
     y_col_name = "POSLAT"

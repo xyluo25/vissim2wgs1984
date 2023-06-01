@@ -1,2 +1,8 @@
 
 *.pypirc
+build/*
+dist/*
+vissim2geojson.egg-info/*
+setup.py
+pyproject.toml
+*.vscode/*
