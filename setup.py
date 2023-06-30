@@ -19,10 +19,10 @@ except Exception:
 
 setuptools.setup(
     name="vissim2geojson",  # Replace with your own username
-    version="1.5.0",
+    version="1.5.1",
     author="Xiangyong Luo",
     author_email="luoxiangyong01@gamil.com",
-    description="Convert vissim files(.inpx and .fzp to geojson, .fhz to csv). This tool help user to convert vissim files to wgs1984 and csv files.",
+    description="Convert VISSIM files: .inpx to .geojson, .fzp and .fhz to csv.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Xiangyongluo/vissim2wgs1984",
@@ -33,13 +33,15 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.8',
 
     install_requires=modules_needed,
     packages=setuptools.find_packages(),
     include_package_data=True,
 
-    package_data={'': ['*.txt', '*.xls', '*.xlsx', '*.csv', '*.png', "*.inpx", "*.fhz", "*.fzp"],
+    package_data={'': ['*.txt', '*.xls', '*.xlsx', '*.csv', '*.png',
+                       "*.inpx", "*.fhz", "*.fzp", "*.db", "*.geojson",
+                       "*.err", "*.knr", "*.lsa", "*.mer", "*.ovw", "*.rsr", "*.inp0", "*.layx", "*.sig"],
                   "test_data": ['*.txt', '*.png', "*.inpx", "*.fhz", "*.fzp"]},
-    data_files=[("vissim_data", ["vissim_data/*"])]
+    # data_files=[("vissim_data", ["vissim_data/*"])]
 )

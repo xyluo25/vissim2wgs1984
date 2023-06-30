@@ -7,4 +7,4 @@
 
 from ._model import *
 
-print("version: 1.5.0")
+print("version: 1.5.1")
