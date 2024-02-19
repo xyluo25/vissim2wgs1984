@@ -6,5 +6,6 @@
 ##############################################################
 
 from ._model import *
+from .pkg_configs import *
 
-print("version: 1.5.1")
+print(f"package version: {pkg_version}")

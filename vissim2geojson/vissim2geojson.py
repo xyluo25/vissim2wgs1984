@@ -16,6 +16,9 @@ from os import listdir
 from os.path import isfile, join, isdir
 import math
 
+from pyufunc import get_filenames_by_ext, func_running_time
+from pathlib import Path
+
 
 class vissim2wgs1984:
 
@@ -27,7 +30,7 @@ class vissim2wgs1984:
                  y_refmap: float = 5317775.409,
                  x_refnet: float = 0,
                  y_refnet: float = 0,
-                 x_col_name:str = "POS",
+                 x_col_name: str = "POS",
                  y_col_name: str = "POSLAT"):
 
         """A tool to convert vissim files to geojson and csv.
@@ -61,23 +64,25 @@ class vissim2wgs1984:
     # This return all files in a folder or subfolder or single file
     def __allFiles(self, path: str, view_files=False) -> list:
 
-        files = []
+        # files = []
 
-        def readFiles(path):
-            if isfile(path):
-                files.append(path)
-            elif isdir(path):
-                for f in listdir(path):
-                    if isfile(join(path, f)):
-                        files.append(join(path, f))
-                    if isdir(join(path, f)):
-                        readFiles(join(path, f))
-            else:
-                print("Invalid Input Path!")
-            return files
+        # def readFiles(path):
+        #     if isfile(path):
+        #         files.append(path)
+        #     elif isdir(path):
+        #         for f in listdir(path):
+        #             if isfile(join(path, f)):
+        #                 files.append(join(path, f))
+        #             if isdir(join(path, f)):
+        #                 readFiles(join(path, f))
+        #     else:
+        #         print("Invalid Input Path!")
+        #     return files
+        file_names = [Path(each_path) for each_path in get_filenames_by_ext(path, file_ext="*")]
+
         if view_files:
-            print(readFiles(path))
-        return readFiles(path)
+            print(file_names)
+        return file_names
 
     def __vissim2wgs1984(self, x_vissim: float, y_vissim: float) -> list:
 
@@ -156,48 +161,8 @@ class vissim2wgs1984:
         # df = pd.DataFrame(link_data)
         return link_data, link_data1, link_data2
 
-    def main(self):
-        # #####save geojson data to geojson file ######
 
-        for i in self.vissim_file_path:
-            if ".inpx" in i:
-                print("############## Begin to process inpx file! ######################\n")
-                self.output_filename = i + ".geojson"
-                self.link = self.__get_link(i)
-                self.vissimLayer, self.vissim_xy, self.wgs1984_lonlat = self.__link_vissim2wgs()
-
-                self.__multilines = MultiLineString([[(3.75, 9.25), (-130.95, 1.52)], [(
-                    23.15, -34.25), (-1.35, -4.65), (3.45, 77.95)]])  # doctest: +ELLIPSIS
-
-                self.__multilines["coordinates"] = self.wgs1984_lonlat
-                feature = Feature(geometry=self.__multilines)
-                feature_collection = FeatureCollection([feature])
-                with open(self.output_filename, 'w') as f:
-                    dump(feature_collection, f)
-                    # f.write(str(self.__multilines))
-                f.close()
-                print("\nSuccessfully Save inpx file to geojson\n", self.output_filename)
-
-            elif ".fzp" in i:
-                print("############## Begin to process fzp file! ######################\n")
-                self.output_filename = i + ".geojson"
-                self.vissim_fzp(i, self.x_col_name, self.y_col_name)
-                self.dataframe2geojson()
-                print("\nSuccessfully Save fzp file to geojson\n", self.output_filename)
-
-            elif ".fhz" in i:
-                print("############## Begin to process fhz file! ######################\n")
-                self.output_filename = i + ".csv"
-                self.vissim_fhz(i)
-                self.fhz_data.to_csv(
-                    self.output_filename, header=True, index=False, encoding="utf_8_sig")
-
-                # df.to_csv(self.output_filename,header=False,index = False,encoding="utf_8_sig")
-                print("\nSuccessfully Save fhz file to csv\n", "fhz file is a vissim output file need no to transfer to geojson\n", self.output_filename)
-
-            else:
-                warnings.warn(f"Invalid Input File or Folder: {i}.")
-
+    @func_running_time
     def vissim_fzp(self, path_vissim_fzp: str, x_col_name: str = "POS", y_col_name: str = "POSLAT") -> None:
         df_fzp = ""
         with open(path_vissim_fzp, 'rb') as ff:
@@ -240,6 +205,7 @@ class vissim2wgs1984:
         self.x_col_name_lonlat = f"{x_col_name}_wgs"
         self.y_col_name_lonlat = f"{y_col_name}_wgs"
 
+    @func_running_time
     def dataframe2geojson(self) -> None:
         df = self.fzp_data
         geometry = [Point(xy) for xy in zip(df[self.x_col_name_lonlat], df[self.y_col_name_lonlat])]
@@ -247,9 +213,10 @@ class vissim2wgs1984:
 
         geo_df = GeoDataFrame(df, crs="EPSG:4326", geometry=geometry)  # geometry=geometry
         geo_df.to_file(self.output_filename, driver="GeoJSON")
-        df.to_csv(self.output_filename + ".csv", index=False)
+        df.to_csv(self.output_filename, index=False)
         # geo_df.to_file(driver='ESRI Shapefile', filename='data.shp')
 
+    @func_running_time
     def vissim_fhz(self, path_vissim_fhz: str) -> None:
 
         with open(path_vissim_fhz, 'rb') as f:
@@ -272,23 +239,47 @@ class vissim2wgs1984:
 
         self.fhz_data = fhz_data
 
+    @func_running_time
+    def main(self):
+        # #####save geojson data to geojson file ######
 
-if __name__ == "__main__":
-    file_inpx = "./vissim_data/xl_002.inpx"
-    file_fhz = "./vissim_data/xl_002_001.fhz"
-    file_fzp = "./vissim_data/xl_002_001.fzp"
-    file_folder = "./vissim_data"
+        for i in self.vissim_file_path:
+            if i.suffix == ".inpx":
+                print("############## Begin to process inpx file! ######################\n")
+                self.output_filename = i.with_suffix(".geojson")
+                self.link = self.__get_link(i)
+                self.vissimLayer, self.vissim_xy, self.wgs1984_lonlat = self.__link_vissim2wgs()
 
-    # prepare map reference data from Vissim
-    x_refmap = -9772791.018
-    y_refmap = 5317836.791
-    x_refnet = 0
-    y_refnet = 0
+                self.__multilines = MultiLineString([[(3.75, 9.25), (-130.95, 1.52)], [(
+                    23.15, -34.25), (-1.35, -4.65), (3.45, 77.95)]])  # doctest: +ELLIPSIS
 
-    # for covert fzp files, if you don't need to convert fzp file, leave these value to default values.
-    x_col_name = "POS"
-    y_col_name = "POSLAT"
+                self.__multilines["coordinates"] = self.wgs1984_lonlat
+                feature = Feature(geometry=self.__multilines)
+                feature_collection = FeatureCollection([feature])
+                with open(self.output_filename, 'w') as f:
+                    dump(feature_collection, f)
+                    # f.write(str(self.__multilines))
+                f.close()
+                print(f"\nSuccessfully Save inpx file to geojson: {self.output_filename}\n")
 
-    # using vissim folder as input path, will generate four files: inpx.geojson, fzp.geojson, fzp.csv, fhz.csv.
-    # all result files will save to the same folder as the input folder.
-    vissim2wgs1984(file_folder, x_refmap, y_refmap, x_refnet, y_refnet, x_col_name, y_col_name).main()
+            elif i.suffix == ".fzp":
+                print("############## Begin to process fzp file! ######################\n")
+                self.output_filename = i.with_suffix(".geojson")
+                self.vissim_fzp(i, self.x_col_name, self.y_col_name)
+                self.dataframe2geojson()
+                print(f"Successfully Save fzp file to geojson: {self.output_filename}\n")
+
+            elif i.suffix == ".fhz":
+                print("############## Begin to process fhz file! ######################\n")
+                self.output_filename = i.with_suffix(".csv")
+                self.vissim_fhz(i)
+                self.fhz_data.to_csv(
+                    self.output_filename, header=True, index=False, encoding="utf_8_sig")
+
+                # df.to_csv(self.output_filename,header=False,index = False,encoding="utf_8_sig")
+                print(f"Successfully Save fhz file to: {self.output_filename}\n", "fhz file is a vissim output file don't need to transfer to geojson\n")
+
+            else:
+                print(f"Invalid Input File or Folder: {str(i)}.")
+                # warnings.warn(f"Invalid Input File or Folder: {str(i)}.")
+        return None
