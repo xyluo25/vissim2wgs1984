@@ -7,6 +7,6 @@
 
 
 pkg_name = 'vissim2geojson'
-pkg_version = '1.5.2'
+pkg_version = '1.5.3'
 pkg_author = 'Mr. Xiangyong Luo'
 pkg_email = 'luoxiangyong01@gmail.com'
