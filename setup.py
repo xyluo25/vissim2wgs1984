@@ -6,6 +6,7 @@
 ##############################################################
 
 import setuptools
+import vissim2geojson as v2g
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -18,10 +19,11 @@ except Exception:
     modules_needed = []
 
 setuptools.setup(
-    name="vissim2geojson",  # Replace with your own username
-    version="1.5.1",
-    author="Xiangyong Luo",
-    author_email="luoxiangyong01@gamil.com",
+    name=v2g.pkg_name,  # Replace with your own username
+    version=v2g.pkg_version,
+    author=v2g.pkg_author,
+    author_email=v2g.pkg_email,
+
     description="Convert VISSIM files: .inpx to .geojson, .fzp and .fhz to csv.",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -33,7 +35,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.8',
+    python_requires='>=3.10',
 
     install_requires=modules_needed,
     packages=setuptools.find_packages(),
