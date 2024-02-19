@@ -21,6 +21,35 @@ from pathlib import Path
 
 
 class vissim2wgs1984:
+    """A tool to convert vissim files to geojson and csv.
+    specifically:
+        convert .inpx file to geojson file
+        convert .fzp file to geojson and csv files
+        convert .fhz file to csv file
+
+    Args:
+        vissim_file_path (str): the folder or file path to the vissim file
+        x_refmap (float, optional): coordinates of the reference point of the background map(Mercator). Defaults to -9772674.016.
+        y_refmap (float, optional): coordinates of the reference point of the background map(Mercator). Defaults to 5317775.409.
+        x_refnet (int, optional): coordinates of the reference point of the network(Cartesian Vissim System). Defaults to 0.
+        y_refnet (int, optional): coordinates of the reference point of the network(Cartesian Vissim System). Defaults to 0.
+        x_col_name (str, optional): the longitude column name in fzp file to convert fzp file to geojson. Defaults to "POS".
+        y_col_name (str, optional): the latitude column name in fzp file to convert fzp file to geojson. Defaults to "POSLAT".
+
+    Methods:
+        vissim_fzp(path_vissim_fzp: str, x_col_name: str = "POS", y_col_name: str = "POSLAT") -> None:
+            Convert .fzp file to geojson and csv files.
+
+        dataframe2geojson() -> None:
+            Convert dataframe to geojson.
+
+        vissim_fhz(path_vissim_fhz: str) -> None:
+            Convert .fhz file to csv file.
+
+        main() -> None:
+            Main function to convert vissim files to geojson and csv.
+
+    """
 
     print("Please check and correctly input x_refmap, y_refmap, x_refnet and y_refnet from your vissim software!")
 
@@ -33,20 +62,9 @@ class vissim2wgs1984:
                  x_col_name: str = "POS",
                  y_col_name: str = "POSLAT"):
 
-        """A tool to convert vissim files to geojson and csv.
-            specifically:
-                convert .inpx file to geojson file
-                convert .fzp file to geojson and csv files
-                convert .fhz file to csv file
-        Args:
-            vissim_file_path (_type_): the folder or file path to the vissim file
-            x_refmap (float, optional): coordinates of the reference point of the background map(Mercator). Defaults to -9772674.016.
-            y_refmap (float, optional): coordinates of the reference point of the background map(Mercator). Defaults to 5317775.409.
-            x_refnet (int, optional): coordinates of the reference point of the network(Cartesian Vissim System). Defaults to 0.
-            y_refnet (int, optional): coordinates of the reference point of the network(Cartesian Vissim System). Defaults to 0.
-            x_col_name (str, optional): the longitude column name in fzp file to convert fzp file to geojson. Defaults to "POS".
-            y_col_name (str, optional):the latitude column name in fzp file to convert fzp file to geojson. Defaults to "POSLAT".
-        """
+        # TDD: test the inputs of the vissim2geojson
+        assert isinstance(vissim_file_path, str), "The input vissim_file_path should be a string."
+        assert isdir(vissim_file_path), "The input vissim_file_path should be a folder."
 
         self.vissim_file_path = self.__allFiles(vissim_file_path)
         print("Input files: ", self.vissim_file_path)
